@@ -1,5 +1,6 @@
 using namespace System.Reflection
 using namespace System.Reflection.Emit
+using namespace System.Collections.Specialized
 using namespace System.Runtime.InteropServices
 
 function New-Enum {
@@ -129,6 +130,31 @@ function New-Structure {
       $il.Emit([OpCodes]::ret)
       [void]$type.CreateType()
     }
+  }
+}
+
+function ConvertTo-BitMap {
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory, Position=0)]
+    [ValidateNotNullOrEmpty()]
+    [Object]$Value,
+
+    [Parameter(Mandatory, Position=1)]
+    [ValidateScript({![String]::IsNullOrEmpty($_)})]
+    [ScriptBlock]$BitMap
+  )
+
+  end {
+    $vtor = [BitVector32]::new($Value)
+    [PSCustomObject](ConvertFrom-StringData (
+      ($BitMap.Ast.FindAll({$args[0].CommandElements}, $true).ToArray().ForEach{
+        $fname, $fbits = $_.CommandElements[0, 2]
+        $mov = !$mov ? [BitVector32]::CreateSection($fbits.Value)
+                     : [BitVector32]::CreateSection($fbits.Value, $mov)
+        '{0} = {1}' -f $fname.Value, $vtor[$mov]
+			}) | Out-String)
+		)
   }
 }
 
