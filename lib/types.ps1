@@ -153,8 +153,8 @@ function ConvertTo-BitMap {
         $mov = !$mov ? [BitVector32]::CreateSection($fbits.Value)
                      : [BitVector32]::CreateSection($fbits.Value, $mov)
         '{0} = {1}' -f $fname.Value, $vtor[$mov]
-			}) | Out-String)
-		)
+         }) | Out-String)
+    )
   }
 }
 

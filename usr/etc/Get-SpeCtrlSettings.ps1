@@ -4,13 +4,13 @@ function Get-SpecCtrlSettings {
   begin {
     New-Delegate ntdll {
       int NtQuerySystemInformation([int, buf, int, buf])
-		}
+    }
 
     $buf = [Byte[]](,0 * 4) # [Byte[]]::new([Marshal]::SizeOf([UInt32]0))
     # SystemKernelVaShadowInformation = 0n196
     if (($nts = $ntdll.NtQuerySystemInformation.Invoke(196, $buf, $buf.Length, $null)) -ne 0) {
       throw (ConvertTo-ErrMessage -NtStatus $nts)
-		}
+    }
     $ks = ConvertTo-BitMap -Value ([BitConverter]::ToUInt32($buf, 0)) -BitMap {
        KvaShadowEnabled           : 1
        KvaShadowUserGlobal        : 1
@@ -19,13 +19,13 @@ function Get-SpecCtrlSettings {
        KvaShadowRequired          : 1
        KvaShadowRequiredAvailable : 1
        Reserved                   : 26
-		}
+    }
 
     $buf.Clear() # using same buffer, simply clear it
     # SystemSpeculationControlInformation = 0n201
     if (($nts = $ntdll.NtQuerySystemInformation.Invoke(201, $buf, $buf.Length, $null)) -ne 0) {
       throw (ConvertTo-ErrMessage -NtStatus $nts)
-		}
+    }
     $sc = ConvertTo-BitMap -Value ([BitConverter]::ToUInt32($buf, 0)) -BitMap {
        BpbEnabled                               : 1
        BpbDisabledSystemPolicy                  : 1
@@ -58,12 +58,12 @@ function Get-SpecCtrlSettings {
        TsxCtrlReported                          : 1
        TaaHardwareImmune                        : 1
        Reserved                                 : 1
-		}
-	}
+    }
+  }
   process {}
   end {
     $ks
     ''
     $sc
-	}
+  }
 }
