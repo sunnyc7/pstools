@@ -18,3 +18,5 @@ function Get-CredProviders {
     $clsids.Dispose()
   }
 }
+
+Export-ModuleMember -Function Get-CredProviders
