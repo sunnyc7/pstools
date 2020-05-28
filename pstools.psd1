@@ -20,6 +20,7 @@
   )
   FunctionsToExport = @(
     'Clear-PsWorkingSet',
+    'Get-ApiSet',
     'Get-ClockRes',
     'Get-CpuCache',
     'Get-CredProviders',
@@ -38,6 +39,7 @@
     'lib\types.ps1',
     'lib\utils.ps1',
     'usr\lib\Clear-PsWorkingSet.ps1',
+    'usr\lib\Get-ApiSet.ps1',
     'usr\lib\Get-ClockRes.ps1',
     'usr\lib\Get-CpuCache.ps1',
     'usr\lib\Get-CredProviders.ps1',
