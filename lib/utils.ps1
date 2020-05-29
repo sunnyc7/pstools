@@ -1,4 +1,5 @@
 using namespace System.ComponentModel
+using namespace System.Security.Principal
 
 function ConvertTo-ErrMessage {
   [CmdletBinding(DefaultParameterSetName='WinNt')]
@@ -54,5 +55,13 @@ function New-PsProxy {
       .$Callback $_
       $_.Dispose()
     }
+  }
+}
+
+function Test-IsAdmin {
+  end {
+    [WindowsPrincipal]::new(
+      [WindowsIdentity]::GetCurrent()
+    ).IsInRole([WindowsBuiltInRole]::Administrator)
   }
 }
