@@ -16,7 +16,8 @@
     'psdump',
     'psresume',
     'psuspend',
-    'vadump'
+    'vadump',
+    'whois'
   )
   FunctionsToExport = @(
     'Clear-AppCompatCache',
@@ -31,6 +32,7 @@
     'Get-PsHandle',
     'Get-PsVMInfo',
     'Resume-PsProcess',
+    'Show-WhoIs',
     'Suspend-PsProcess'
   )
   FileList = @(
@@ -51,6 +53,7 @@
     'usr\lib\Get-PsHandle.ps1',
     'usr\lib\Get-PsVMInfo.ps1',
     'usr\lib\Resume-PsProcess.ps1',
+    'usr\lib\Show-WhoIs.ps1',
     'usr\lib\Suspend-PsProcess.ps1',
     'pstools.psd1',
     'pstools.psm1'
