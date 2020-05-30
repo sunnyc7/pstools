@@ -39,7 +39,7 @@ function Get-ApiSet {
   }
   process {}
   end {
-    $ptr = [Marshal]::ReadIntPtr([IntPtr]( # ApiSetMap offsets
+    $ptr = [Marshal]::ReadIntPtr([IntPtr]( # ApiSetMap offset
       $ntdll.RtlGetCurrentPeb.Invoke().$to_i() + ($sz -eq 8 ? 0x68 : 0x38)
     ))
     $asn, $mov = ($ptr -as [API_SET_NAMESPACE]), $ptr.$to_i()
@@ -63,7 +63,7 @@ function Get-ApiSet {
         Sealed = $ses
         Linked = $mod
       }
-      # move to the next exntry
+      # move to the next entry
       $pasne = [IntPtr]($pasne.$to_i() + $asne::GetSize())
     }
   }
