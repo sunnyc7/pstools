@@ -17,6 +17,7 @@
     'psdump',
     'psresume',
     'psuspend',
+    'streams',
     'strings',
     'vadump',
     'whois'
@@ -34,6 +35,7 @@
     'Get-PsDump',
     'Get-PsHandle',
     'Get-PsVMInfo',
+    'Get-Streams',
     'Get-Strings',
     'Resume-PsProcess',
     'Show-WhoIs',
@@ -57,6 +59,7 @@
     'usr\lib\Get-PsDump.ps1',
     'usr\lib\Get-PsHandle.ps1',
     'usr\lib\Get-PsVMInfo.ps1',
+    'usr\lib\Get-Streams.ps1',
     'usr\lib\Get-Strings.ps1',
     'usr\lib\Resume-PsProcess.ps1',
     'usr\lib\Show-WhoIs.ps1',
