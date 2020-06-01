@@ -1,0 +1,8 @@
+*
+!.gitignore
+!license
+!pstools.psd1
+!pstools.psm1
+!readme.txt
+!*.ps1
+!*/
