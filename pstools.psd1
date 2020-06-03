@@ -41,6 +41,7 @@
     'Get-Streams',
     'Get-Strings',
     'Measure-Execution',
+    'New-HardLink',
     'Resume-PsProcess',
     'Show-WhoIs',
     'Suspend-PsProcess'
@@ -67,6 +68,7 @@
     'usr\lib\Get-Streams.ps1',
     'usr\lib\Get-Strings.ps1',
     'usr\lib\Measure-Execution.ps1',
+    'usr\lib\New-HardLink.ps1',
     'usr\lib\Resume-PsProcess.ps1',
     'usr\lib\Show-WhoIs.ps1',
     'usr\lib\Suspend-PsProcess.ps1',
