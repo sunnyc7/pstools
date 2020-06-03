@@ -20,6 +20,7 @@
     'psuspend',
     'streams',
     'strings',
+    'time',
     'vadump',
     'whois'
   )
@@ -39,6 +40,7 @@
     'Get-PsVMInfo',
     'Get-Streams',
     'Get-Strings',
+    'Measure-Execution',
     'Resume-PsProcess',
     'Show-WhoIs',
     'Suspend-PsProcess'
@@ -64,6 +66,7 @@
     'usr\lib\Get-PsVMInfo.ps1',
     'usr\lib\Get-Streams.ps1',
     'usr\lib\Get-Strings.ps1',
+    'usr\lib\Measure-Execution.ps1',
     'usr\lib\Resume-PsProcess.ps1',
     'usr\lib\Show-WhoIs.ps1',
     'usr\lib\Suspend-PsProcess.ps1',
