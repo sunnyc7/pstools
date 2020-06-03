@@ -94,7 +94,7 @@ function Get-Streams {
 
         $sfh.Dispose()
         Write-Verbose "$($sfh.IsClosed)"
-        "$('-' * 13)`n`e[35;1mTotally found`e[33;0m`: $i stream(s)."
+        "$('-' * 13)`n`e[35;1mTotally found`e[0m`: $i stream(s)."
       }
     }
   }
