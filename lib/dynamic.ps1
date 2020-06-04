@@ -85,7 +85,7 @@ function ConvertFrom-PtrToMethod {
   end {
     $method = $Prototype.GetMethod('Invoke')
     $returntype, $paramtypes = $method.ReturnType, $method.GetParameters().ParameterType
-    $paramtypes = ($paramtypes, $null)[!$paramtypes]
+    $paramtypes = $paramtypes ?? $null # requires an explicit null
     $il, $sz = ($holder = [DynamicMethod]::new(
       'Invoke', $returntype, $paramtypes, $Prototype
     )).GetILGenerator(), [IntPtr]::Size
