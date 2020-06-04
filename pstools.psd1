@@ -10,6 +10,7 @@
   AliasesToExport = @(
     'clockres',
     'clpws',
+    'coreinfo',
     'ent',
     'handle',
     'loadord',
@@ -30,6 +31,7 @@
     'Get-ApiSet',
     'Get-ClockRes',
     'Get-CpuCache',
+    'Get-CpuId',
     'Get-CredProviders',
     'Get-Entropy',
     'Get-LoadOrder',
@@ -57,6 +59,7 @@
     'usr\lib\Get-ApiSet.ps1',
     'usr\lib\Get-ClockRes.ps1',
     'usr\lib\Get-CpuCache.ps1',
+    'usr\lib\Get-CpuId.ps1',
     'usr\lib\Get-CredProviders.ps1',
     'usr\lib\Get-Entropy.ps1',
     'usr\lib\Get-LoadOrder.ps1',
