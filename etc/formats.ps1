@@ -21,7 +21,7 @@ class fmt {
     $this.time = try {
       $v -gt [UInt32]::MaxValue ? [DateTime]::FromFileTime($v)
                        : ([DateTime]'1.1.1970').AddSeconds($v).ToLocalTime()
-    } catch { $_; 'n/a' }
+    } catch { 'n/a' }
     $this.float = 'low {0:G6} high {1:G6}' -f (
       [BitConverter]::ToSingle($bytes, 0)
     ), [BitConverter]::ToSingle($bytes, 4)
