@@ -6,7 +6,7 @@
   Author = 'greg zakharov'
   Copyright = 'MIT'
   Description = 'Useful utilities for Win10 in everyday experience.'
-  PowerShellVersion = '7.0'
+  PowerShellVersion = '7.1'
   AliasesToExport = @(
     'clockres',
     'clpws',
@@ -48,6 +48,7 @@
     'Suspend-PsProcess'
   )
   FileList = @(
+    'etc\formats.ps1',
     'lib\accel.ps1',
     'lib\dynamic.ps1',
     'lib\pcall.ps1',
@@ -76,4 +77,5 @@
     'pstools.psd1',
     'pstools.psm1'
   )
+  ScriptsToProcess = 'etc\formats.ps1'
 }
