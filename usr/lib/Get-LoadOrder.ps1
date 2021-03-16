@@ -3,7 +3,7 @@ function Get-LoadOrder {
   [CmdletBinding()]param([Parameter()][Switch]$AsTable)
 
   begin {
-    $root = 'HKLM:\SYSTEM\CurrentControlSet'
+    $root, $sysdir = 'HKLM:\SYSTEM\CurrentControlSet', [Environment]::SystemDirectory
     $type = 'Boot', 'System', 'Automatic' # launching types
     $group = (Get-ItemProperty "$root\Control\ServiceGroupOrder").List
     $items = ($rk = Get-Item "$root\Services").GetSubKeyNames().ForEach{
@@ -13,7 +13,7 @@ function Get-LoadOrder {
           Group = $sub.GetValue('Group')
           Start = $start
           Tag   = $sub.GetValue('Tag')
-          Image = $sub.GetValue('ImagePath')
+          Image = $sub.GetValue('ImagePath') -replace '(?:\\)?.*system32', $sysdir
         }
       }
       $sub.Dispose()
