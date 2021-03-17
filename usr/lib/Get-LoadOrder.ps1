@@ -13,7 +13,8 @@ function Get-LoadOrder {
           Group = $sub.GetValue('Group')
           Start = $start
           Tag   = $sub.GetValue('Tag')
-          Image = $sub.GetValue('ImagePath') -replace '(?:\\)?.*system32', $sysdir
+          Image = ($sub.GetValue('ImagePath') ?? "system32\drivers\$_.sys"
+                                    ) -replace '(?:\\)?.*system32', $sysdir
         }
       }
       $sub.Dispose()
@@ -33,7 +34,7 @@ function Get-LoadOrder {
     $rk.Dispose()
 
     function private:Get-Objects([String]$Value) {
-      process {
+      end {
         $scope = $items.Where{$_.Start -eq $type.IndexOf($Value)}
         $parts = $scope | Group-Object -Property Group
         $parts = foreach ($i in $(foreach ($g in $group) {
