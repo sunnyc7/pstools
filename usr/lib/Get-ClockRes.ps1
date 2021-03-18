@@ -18,7 +18,7 @@ function Get-ClockRes {
     ($zip = [Linq.Enumerable]::Zip(
       [String[]]('Maximum', 'Minimum', 'Current'),
       [String[]]($max, $min, $cur).ForEach{
-        ' time resolution: {0:f3} ms' -f ($_ / 10000)
+        ' timer interval: {0:f3} ms' -f ($_ / 10000)
       }, [Func[String, String, String]]{$args[0] + $args[1]}
     ))
     $zip.Dispose()
