@@ -13,8 +13,9 @@ function Get-LoadOrder {
           Group = $sub.GetValue('Group')
           Start = $start
           Tag   = $sub.GetValue('Tag')
-          Image = ($sub.GetValue('ImagePath') ?? "system32\drivers\$_.sys"
-                                    ) -replace '(?:\\)?.*system32', $sysdir
+          Image = ($sub.GetValue('ImagePath') ?? (
+            (Test-Path ($$ = "$sysdir\drivers\$_.sys")) ? $$ : 'n/a'
+          )) -replace '(?:\\)?.*system32', $sysdir
         }
       }
       $sub.Dispose()
