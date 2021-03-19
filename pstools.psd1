@@ -1,6 +1,6 @@
 @{
   RootModule = 'pstools.psm1'
-  ModuleVersion = '7.0.1.5'
+  ModuleVersion = '7.0.1.7'
   CompatiblePSEditions = 'Core'
   GUID = 'de1b363a-38a0-4921-837f-926c9fad2603'
   Author = 'greg zakharov'
@@ -42,6 +42,7 @@
     'Get-PsVMInfo',
     'Get-Streams',
     'Get-Strings',
+    'Get-SysModules',
     'Measure-Execution',
     'Resume-PsProcess',
     'Show-WhoIs',
@@ -70,6 +71,7 @@
     'usr\lib\Get-PsVMInfo.ps1',
     'usr\lib\Get-Streams.ps1',
     'usr\lib\Get-Strings.ps1',
+    'usr\lib\Get-SysModules.ps1',
     'usr\lib\Measure-Execution.ps1',
     'usr\lib\Resume-PsProcess.ps1',
     'usr\lib\Show-WhoIs.ps1',
