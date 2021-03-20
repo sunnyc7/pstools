@@ -1,6 +1,6 @@
 @{
   RootModule = 'pstools.psm1'
-  ModuleVersion = '7.0.1.7'
+  ModuleVersion = '7.0.1.10'
   CompatiblePSEditions = 'Core'
   GUID = 'de1b363a-38a0-4921-837f-926c9fad2603'
   Author = 'greg zakharov'
@@ -13,6 +13,7 @@
     'coreinfo',
     'ent',
     'handle',
+    'heaps',
     'loadord',
     'lsess',
     'pipelist',
@@ -39,6 +40,7 @@
     'Get-PipeList',
     'Get-PsDump',
     'Get-PsHandle',
+    'Get-PsHeaps',
     'Get-PsVMInfo',
     'Get-Streams',
     'Get-Strings',
