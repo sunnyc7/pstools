@@ -41,7 +41,7 @@ function Get-SysModules {
 
       $psz, $sz = [IntPtr]::Size, [RTL_PROCESS_MODULE_INFORMATION]::GetSize()
       $num, $itr = [Marshal]::ReadInt32($ptr), ($ptr."ToInt$($psz * 8)"() + $psz)
-      $(for ($i = 0; $i -lt $num; $i++) {
+      $((0..($num - 1)).ForEach{
         $mod = ([IntPtr]$itr) -as [RTL_PROCESS_MODULE_INFORMATION]
         [PSCustomObject]@{
           Ord     = $mod.LoadOrderIndex
