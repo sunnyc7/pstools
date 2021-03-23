@@ -2,7 +2,7 @@ using namespace System.Security.Principal
 
 Set-Alias -Name lsess -Value Get-LogonSessions
 function Get-LogonSessions {
-  [CmdletBinding()]param()
+  [CmdletBinding()]param([Parameter()][Switch]$AsTable)
 
   begin {
     New-Structure LUID {
@@ -78,7 +78,7 @@ function Get-LogonSessions {
   }
   process {}
   end {
-    $count, $slist = 0, [IntPtr]::Zero
+    $count, $slist, $dump = 0, [IntPtr]::Zero, @()
     try {
       if (($nts = $secur32.LsaEnumerateLogonSessions.Invoke([ref]$count, [ref]$slist)) -ne 0) {
         throw (ConvertTo-ErrMessage -NtStatus $nts)
@@ -91,7 +91,7 @@ function Get-LogonSessions {
         }
 
         $sess = $data -as [SECURITY_LOGON_SESSION_DATA]
-        [PSCustomObject]@{
+        $dump += [PSCustomObject]@{
           LogonType   = $sess.LogonType
           UserName    = '{0}\{1}' -f $sess.LogonDomain.Buffer, $sess.UserName.Buffer
           AuthPackage = $sess.AuthenticationPackage.Buffer
@@ -114,6 +114,8 @@ function Get-LogonSessions {
         }
       }
     }
+
+    if ($dump) { $AsTable ? (Format-Table -InputObject $dump -AutoSize) : $dump }
   }
 }
 
