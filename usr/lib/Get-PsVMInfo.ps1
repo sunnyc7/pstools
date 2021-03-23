@@ -45,10 +45,10 @@ function Get-PsVMInfo {
       MEM_PROTECT Protect
       MEM_TYPE Type
     }
-    $out = [MEMEORY_BASIC_INFORMATION].MakeByRefType()
+    $out_ = [MEMEORY_BASIC_INFORMATION].MakeByRefType()
 
     New-Delegate ntdll {
-      int NtQueryVirtualMemory([ptr, ptr, uint, $out, uint, buf])
+      int NtQueryVirtualMemory([ptr, ptr, uint, _out_, uint, buf])
     }
 
     $sz = [IntPtr]::Size

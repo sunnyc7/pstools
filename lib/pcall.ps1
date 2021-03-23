@@ -59,7 +59,7 @@ function New-Delegate {
       $fnargs = $def.Pipeline.Extent.Text
       [Object[]]$fnargs = [String]::IsNullOrEmpty($fnargs) ? $fnret : (
         ($fnargs -replace '\[|\]' -split ',\s+?').ForEach{
-          $_.StartsWith('$') ? (Get-Variable $_.Remove(0, 1) -ValueOnly) : $_
+          $_.StartsWith('_') ? (Get-Variable $_.Remove(0, 1) -ValueOnly) : $_
         } + $fnret
       )
 
