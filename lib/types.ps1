@@ -23,21 +23,21 @@ function New-Enum {
 
   end {
     if (!($pmb = Get-DynBuilder).GetType($Name)) {
-      $pack = $Type -as [Type]
-      $type = $pmb.DefineEnum($Name, 'Public', $pack)
+      $enm = $pmb.DefineEnum($Name, 'Public', $Type)
       if ($Flags) {
-        $type.SetCustomAttribute((
+        $enm.SetCustomAttribute((
           [CustomAttributeBuilder]::new([FlagsAttribute].GetConstructor(@()), @())
         ))
       }
 
       $i = 0
-      $Definition.ToString().Trim().Split("`r`n", [StringSplitOptions]::RemoveEmptyEntries).ForEach{
-        $arr = @(($_ -split '(?:\s+)?=(?:\s+)?').Trim())
-        [void]$type.DefineLiteral($arr[0], ($i = [Int32]($arr[1] ?? $i)) -as $pack)
+      $Definition.Ast.FindAll({$args[0].CommandElements}, $true).ToArray().ForEach{
+        $fn, $$, $fv = $_.CommandElements.Value
+        [void]$Type::TryParse(($i = $fv ?? $i), [ref]$i)
+        [void]$enm.DefineLiteral($fn, $i)
         $i+=1
       }
-      [void]$type.CreateType()
+      [void]$enm.CreateType()
     }
   }
 }
