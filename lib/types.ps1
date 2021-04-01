@@ -32,9 +32,9 @@ function New-Enum {
 
       $i = 0
       $Definition.Ast.FindAll({$args[0].CommandElements}, $true).ToArray().ForEach{
-        $fn, $$, $fv = $_.CommandElements.Value
-        [void]$Type::TryParse(($i = $fv ?? $i), [ref]$i)
-        [void]$enm.DefineLiteral($fn, $i)
+        $fn, $$, $fv = $_.CommandElements
+        $i = [BitConverter]::"To$($Type.Name)"([BitConverter]::GetBytes($fv.Value ?? $i))
+        [void]$enm.DefineLiteral($fn.Value, $i)
         $i+=1
       }
       [void]$enm.CreateType()
