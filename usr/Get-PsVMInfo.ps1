@@ -89,15 +89,15 @@ function Get-PsVMInfo {
             break
           }
           [PSCustomObject]@{
-            BaseAddress = $fmt -f ($$ = $out.BaseAddress.$to_i())
-            EndAddress =  $fmt -f ($$ + $out.RegionSize.$to_u())
+            BaseAddress = $fmt -f ($ba = $out.BaseAddress.$to_i())
+            EndAddress =  $fmt -f ($ea = $ba + $out.RegionSize.$to_u())
             AllocationProtect = $out.AllocationProtect
             State = $out.State
             Protect = $out.Protect
             Type = $out.Type
-            Point = $pnt[$$]
+            Point = $pnt[$ba]
           }
-          $ptr = [IntPtr]($out.BaseAddress.$to_i() + [Int64]$out.RegionSize.$to_u())
+          $ptr = [IntPtr]$ea
         }) | Format-Table -AutoSize
       }
     }
