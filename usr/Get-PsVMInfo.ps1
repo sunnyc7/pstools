@@ -75,7 +75,12 @@ function Get-PsVMInfo {
         }
       }
       else {
-        $ptr = [IntPtr]::Zero
+        $ptr, $pnt = [IntPtr]::Zero, @{}
+        $pnt[([IntPtr]0x00007FFE0000).$to_i()] = 'User Shared Data'
+        foreach ($module in $_.Modules) {
+          $pnt[$module.BaseAddress.$to_i()] = $module.ModuleName
+        }
+
         $(while (1) {
           if (($nts = $ntdll.NtQueryVirtualMemory.Invoke(
             $_.Handle, $ptr, 0, [ref]$out, $sz, $null
@@ -84,13 +89,13 @@ function Get-PsVMInfo {
             break
           }
           [PSCustomObject]@{
-            BaseAddress = $fmt -f $out.BaseAddress.$to_i()
-            AllocationBase = $fmt -f $out.AllocationBase.$to_i()
+            BaseAddress = $fmt -f ($$ = $out.BaseAddress.$to_i())
+            EndAddress =  $fmt -f ($$ + $out.RegionSize.$to_u())
             AllocationProtect = $out.AllocationProtect
-            RegionSize = $fmt -f $out.RegionSize.$to_u()
             State = $out.State
             Protect = $out.Protect
             Type = $out.Type
+            Point = $pnt[$$]
           }
           $ptr = [IntPtr]($out.BaseAddress.$to_i() + [Int64]$out.RegionSize.$to_u())
         }) | Format-Table -AutoSize
