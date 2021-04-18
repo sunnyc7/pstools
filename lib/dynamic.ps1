@@ -66,7 +66,7 @@ function New-DynParameter {
   }
 }
 
-function ConvertFrom-PtrToMethod {
+<#function ConvertFrom-PtrToMethod {
   [CmdletBinding()]
   param(
     [Parameter(Mandatory, Position=0)]
@@ -100,4 +100,4 @@ function ConvertFrom-PtrToMethod {
 
     $holder.CreateDelegate($Prototype)
   }
-}
+}#>
