@@ -58,7 +58,7 @@ function Get-PsVMInfo {
   end {
     New-PsProxy $PSBoundParameters -Callback {
       $out, $sz = [MEMEORY_BASIC_INFORMATION]::new(), [MEMEORY_BASIC_INFORMATION]::GetSize()
-      if ($paramAddress.Value -ne 0) {
+      if ($paramAddress.Value -ne [IntPtr]::Zero) {
         if (($nts = $ntdll.NtQueryVirtualMemory.Invoke(
           $_.Handle, $paramAddress.Value, 0, [ref]$out, $sz, $null
         )) -ne 0) { Write-Verbose (ConvertTo-ErrMessage -NtStatus $nts) }
