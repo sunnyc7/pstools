@@ -51,56 +51,38 @@ function Get-PsVMInfo {
       int NtQueryVirtualMemory([ptr, ptr, uint, _out_, uint, buf])
     }
 
-    $sz = [IntPtr]::Size
-    $fmt, $to_i, $to_u = "{0:X$($sz * 2)}", "ToInt$($sz * 8)", "ToUInt$($sz * 8)"
+    $fmt, $to_i, $to_u = "{0:X$(($sz = [IntPtr]::Size) * 2)}", "ToInt$($sz * 8)", "ToUInt$($sz * 8)"
+    $sz, $ptr = [MEMEORY_BASIC_INFORMATION]::GetSize(), ($paramAddress.Value ?? [IntPtr]::Zero)
+    $query =! ($ptr -eq [IntPtr]::Zero)
   }
   process {}
   end {
     New-PsProxy $PSBoundParameters -Callback {
-      $out, $sz = [MEMEORY_BASIC_INFORMATION]::new(), [MEMEORY_BASIC_INFORMATION]::GetSize()
-      if ($paramAddress.Value -ne [IntPtr]::Zero) {
-        if (($nts = $ntdll.NtQueryVirtualMemory.Invoke(
-          $_.Handle, $paramAddress.Value, 0, [ref]$out, $sz, $null
-        )) -ne 0) { Write-Verbose (ConvertTo-ErrMessage -NtStatus $nts) }
-        else {
-          [PSCustomObject]@{
-            BaseAddress = $fmt -f $out.BaseAddress.$to_i()
-            AllocationBase = $fmt -f $out.AllocationBase.$to_i()
-            AllocationProtect = $out.AllocationProtect
-            RegionSize = $fmt -f $out.RegionSize.$to_u()
-            State = $out.State
-            Protect = $out.Protect
-            Type = $out.Type
-          }
-        }
-      }
-      else {
-        $ptr, $pnt = [IntPtr]::Zero, @{}
-        $pnt[([IntPtr]0x00007FFE0000).$to_i()] = 'User Shared Data'
-        foreach ($module in $_.Modules) {
-          $pnt[$module.BaseAddress.$to_i()] = $module.ModuleName
-        }
+      $out = [MEMEORY_BASIC_INFORMATION]::new()
 
-        $(while (1) {
-          if (($nts = $ntdll.NtQueryVirtualMemory.Invoke(
-            $_.Handle, $ptr, 0, [ref]$out, $sz, $null
-          )) -ne 0) {
-            Write-Verbose (ConvertTo-ErrMessage -NtStatus $nts)
-            break
-          }
-          [PSCustomObject]@{
-            BaseAddress = $fmt -f ($ba = $out.BaseAddress.$to_i())
-            EndAddress =  $fmt -f ($ea = $ba + $out.RegionSize.$to_u())
-            AllocationProtect = $out.AllocationProtect
-            State = $out.State
-            Protect = $out.Protect
-            Type = $out.Type
-            Point = $pnt[$ba]
-          }
-          $ptr = [IntPtr]$ea
-        }) | Format-Table -AutoSize
+      while (1) {
+        if (($nts = $ntdll.NtQueryVirtualMemory.Invoke($_.Handle, $ptr, 0, [ref]$out, $sz, $null)) -ne 0) {
+          Write-Verbose (ConvertTo-ErrMessage -NtStatus $nts)
+          break
+        }
+        $dmp = [PSCustomObject]@{
+          BaseAddress = $fmt -f ($ba = $out.BaseAddress.$to_i())
+          EndAddress = $fmt -f ($ea = $ba + $out.RegionSize.$to_u())
+          AllocationProtect = $out.AllocationProtect
+          State = $out.State
+          Protect = $out.Protect
+          Type = $out.Type
+        }
+        $local:ptr = [IntPtr]$ea
+        if ($query) { Add-Member -InputObject $dmp -MemberType NoteProperty -Name PID -Value $_.Id }
+        $dmp
+
+        if ($query) {
+          $local:ptr = $paramAddress.Value
+          break
+        }
       }
-    }
+    } | Format-Table -AutoSize
   }
 }
 
