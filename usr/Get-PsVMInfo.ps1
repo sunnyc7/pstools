@@ -28,13 +28,13 @@ function Get-PsVMInfo {
       MEM_COMMIT  = 0x00001000
       MEM_RESERVE = 0x00002000
       MEM_FREE    = 0x00010000
-    } -Type ([UInt32]) -Flags
+    } -Type ([UInt32]) #-Flags
 
     New-Enum MEM_TYPE {
       MEM_PRIVATE = 0x00020000
       MEM_MAPPED  = 0x00040000
       MEM_IMAGE   = 0x01000000
-    } -Type ([UInt32]) -Flags
+    } -Type ([UInt32]) #-Flags
 
     New-Structure MEMEORY_BASIC_INFORMATION {
       IntPtr  BaseAddress
