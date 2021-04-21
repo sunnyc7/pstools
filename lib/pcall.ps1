@@ -1,6 +1,6 @@
 using namespace System.Linq
 using namespace System.Reflection
-using namespace System.Reflection.Emit
+#using namespace System.Reflection.Emit
 using namespace System.Linq.Expressions
 using namespace System.Runtime.InteropServices
 
@@ -133,7 +133,7 @@ function New-ILMethod {
     }
 
     [ScriptBlock]::Create((Out-String -InputObject ($Code.Split("`n").Trim().ForEach{
-      '$il.' + $($_.StartsWith('$') ? "MarkLabel($_)" : "Emit([OpCodes]::$_)")
+      '$il.' + $($_.StartsWith('$') ? "MarkLabel($_)" : "Emit([Reflection.Emit.OpCodes]::$_)")
     }))).Invoke()
     $fnarg, $fnret = ($Parameters.Name.ForEach{"[$_]"} -join ', '), "[$($ReturnType.Name)]"
     $dm.CreateDelegate([void] -eq $ReturnType ? "Action[$fnarg]" : "Func[$(
