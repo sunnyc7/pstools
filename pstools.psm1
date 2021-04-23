@@ -1,9 +1,11 @@
 using namespace System.Reflection.Emit
 using namespace System.Runtime.InteropServices
 
-$GetKernelbaseExports = {
+$GetDllExports = {
+  param([Parameter(Mandatory)][ValidateNotNullOrEmpty()][String]$Module)
+
   end {
-    $mod = ($ps = Get-Process -Id $PID).Modules.Where{$_.ModuleName -match '^kernelbase'}.BaseAddress
+    $mod = ($ps = Get-Process -Id $PID).Modules.Where{$_.ModuleName -match "^$Module"}.BaseAddress
     $ps.Dispose() && $($jmp = ($mov = [Marshal]::ReadInt32($mod, 0x3C)) + [Marshal]::SizeOf([UInt32]0))
     $jmp = switch ([BitConverter]::ToUInt16([BitConverter]::GetBytes([Marshal]::ReadInt16($mod, $jmp)), 0)) {
       0x014C { 0x20, 0x78, 0x7C } 0x8664 { 0x40, 0x88, 0x8C } default { throw [SystemException]::new() }
@@ -85,22 +87,35 @@ function ConvertFrom-PtrToMethod {
 }#>
 
 $Signatures = @{
+  RtlNtStatusToDosError = [Func[Int32, Int32]]
+}
+
+$GetDllExports.Invoke('ntdll').Where{$_.Name -in $Signatures.Keys}.ForEach{
+  Set-Variable -Scope Global -Option ReadOnly -Name $_.Name -Value (
+    ConvertFrom-PtrToMethod $_.Address $Signatures[$_.Name] StdCall
+  ) -Force
+}
+
+$Signatures = @{
   FreeLibrary = [Func[IntPtr, Boolean]]
   GetModuleHandleW = [Func[[Byte[]], IntPtr]]
   GetProcAddress = [Func[IntPtr, String, IntPtr]]
   LoadLibraryW = [Func[[Byte[]], IntPtr]]
 }
 
-(& $GetKernelbaseExports).Where{$_.Name -in $Signatures.Keys}.ForEach{
+$GetDllExports.Invoke('kernelbase').Where{$_.Name -in $Signatures.Keys}.ForEach{
   Set-Variable -Scope Global -Option ReadOnly -Name (
     $_.Name.EndsWith('W') ? $_.Name.Substring(0, $_.Name.Length - 1) : $_.Name
   ) -Value (ConvertFrom-PtrToMethod $_.Address $Signatures[$_.Name] StdCall) -Force
 }
 
 $MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
-  ('FreeLibrary', 'GetModuleHandle', 'GetProcAddress', 'LoadLibrary').ForEach{
-    Remove-Variable -Name $_ -Scope Global -Force
-  }
+  ('FreeLibrary',
+   'GetModuleHandle',
+   'GetProcAddress',
+   'LoadLibrary',
+   'RtlNtStatusToDosError'
+  ).ForEach{ Remove-Variable -Name $_ -Scope Global -Force }
 }
 
 ('lib', 'usr').ForEach{

@@ -13,10 +13,7 @@ function ConvertTo-ErrMessage {
 
   end {
     [Win32Exception]::new(
-      $WinNt ? $WinNt : $(
-        New-Delegate ntdll { int RtlNtStatusToDosError([int]) }
-        $ntdll.RtlNtStatusToDosError.Invoke($NtStatus)
-      )
+      $WinNt ? $WinNt : $($RtlNtStatusToDosError.Invoke($NtStatus))
     ).Message
   }
 }
