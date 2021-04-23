@@ -69,23 +69,6 @@ function ConvertFrom-PtrToMethod {
   }
 }
 
-<#$EstablishDelegate = {
-  param([IntPtr]$Address, [Type]$Prototype, [CallingConvention]$CallingConvention = 'StdCall')
-
-  end {
-    $method = $Prototype.GetMethod('Invoke')
-    $returntype, $paramtypes = $method.ReturnType, $method.GetParameters().ParameterType
-    $paramtypes = $paramtypes ?? $null # requires an explicit null
-    $il, $sz = ($holder = [DynamicMethod]::new('Invoke', $returntype, $paramtypes, $Prototype)
-    ).GetILGenerator(), [IntPtr]::Size
-    if ($paramtypes) { (0..($paramtypes.Length - 1)).ForEach{ $il.Emit([OpCodes]::ldarg, $_) } }
-    $il.Emit([OpCodes]::"ldc_i$sz", $Address."ToInt$($sz * 8)"())
-    $il.EmitCalli([OpCodes]::calli, $CallingConvention, $returntype, $paramtypes)
-    $il.Emit([OpCodes]::ret)
-    $holder.CreateDelegate($Prototype)
-  }
-}#>
-
 $Signatures = @{
   RtlNtStatusToDosError = [Func[Int32, Int32]]
 }
