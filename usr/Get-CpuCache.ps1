@@ -47,19 +47,19 @@ function Get-CpuCache {
       SYSTEM_LOGICAL_PROCESSOR_INFORMATION_UNION ProcessorInformation
     }
 
-    New-Delegate kernel32 {
+    New-Delegate kernelbase {
       bool GetLogicalProcessorInformation([buf, uint_])
     }
   }
   process {}
   end {
     $bsz = 0 # first pass is required to retrieve real buffer size
-    if (!$kernel32.GetLogicalProcessorInformation.Invoke($null, [ref]$bsz) -and !$bsz) {
+    if (!$kernelbase.GetLogicalProcessorInformation.Invoke($null, [ref]$bsz) -and !$bsz) {
       throw [InvalidOperationException]::new('Cannot retrieve buffer size')
     }
 
     $buf = [Byte[]]::new($bsz)
-    if (!$kernel32.GetLogicalProcessorInformation.Invoke($buf, [ref]$bsz)) {
+    if (!$kernelbase.GetLogicalProcessorInformation.Invoke($buf, [ref]$bsz)) {
       throw [InvalidOperationException]::new('Internal error.')
     }
 
