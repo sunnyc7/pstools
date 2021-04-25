@@ -13,10 +13,7 @@ function New-Delegate {
 
     [Parameter(Mandatory, Position=1)]
     [ValidateScript({![String]::IsNullOrEmpty($_)})]
-    [ScriptBlock]$Signature <#,
-
-    [Parameter()]
-    [Switch]$LVal#>
+    [ScriptBlock]$Signature
   )
 
   begin {
@@ -25,20 +22,6 @@ function New-Delegate {
         [IntPtr[]]@()
       ) -Visibility Private -Scope Global -PassThru
     }
-
-    <#$kernel32 = @{}
-    [Array]::Find(( # GetModuleHandle, GetProcAddress and LoadLibrary
-      Add-Type -AssemblyName Microsoft.Win32.SystemEvents -PassThru
-    ), [Predicate[Type]]{$args[0].Name -eq 'kernel32'}).GetMethods(
-      [BindingFlags]'NonPublic, Static, Public'
-    ).Where{$_.Name -cmatch '\A(Get|Load)(P|M|L)'}.ForEach{$kernel32[$_.Name] = $_}
-
-    if (($mod = $kernel32.GetModuleHandle.Invoke($null, @($Module))) -eq [IntPtr]::Zero) {
-      if (($mod = $kernel32.LoadLibrary.Invoke($null,@($Module))) -eq [IntPtr]::Zero) {
-        throw [DllNotfoundException]::new("Cannot find $Module library.")
-      }
-      $stash.Value += $mod
-    }#>
 
     if (($mod = $GetModuleHandle.Invoke([buf].Uni($Module))) -eq [IntPtr]::Zero) {
       if (($mod = $LoadLibrary.Invoke([buf].Uni($Module))) -eq [IntPtr]::Zero) {
@@ -59,9 +42,6 @@ function New-Delegate {
     ) {
       $fnret, $fname = ($def = $p[$i].CommandElements).Value
 
-      <#if (($fnsig = $kernel32.GetProcAddress.Invoke($null, @($mod, $fname))) -eq [IntPtr]::Zero) {
-        throw [InvalidOperationException]::new("Cannot find $fname signature.")
-      }#>
       if (($fnsig = $GetProcAddress.Invoke($mod, $fname)) -eq [IntPtr]::Zero) {
         throw [InvalidOperationException]::new("Cannot find $fname signature.")
       }
@@ -78,17 +58,11 @@ function New-Delegate {
       ).Invoke([Marshal], $fnsig)
     }
 
-    #if ($LVal) { return $funcs } # do not establish variable automatically
-
     Add-Member -InputObject $funcs -Name Dispose -MemberType ScriptMethod -Value {
       if (!($stash = $ExecutionContext.SessionState.PSVariable.Get('PwsHandlesStash')).Value) {
         return # nothing to release
       }
 
-      <#$kernel32 = New-Delegate -Module kernel32 -Signature { Boolean FreeLibrary([IntPtr]) } -LVal
-      [ParallelEnumerable]::Reverse([ParallelEnumerable]::AsParallel($stash.Value)).ForEach{
-        if (!([Boolean]$res = $kernel32.FreeLibrary.Invoke($_))) { Write-Warning $res }
-      }#>
       [ParallelEnumerable]::Reverse([ParallelEnumerable]::AsParallel($stash.Value)).ForEach{
         if (!([Boolean]$res = $FreeLibrary.Invoke($_))) { Write-Warning $res }
       }
