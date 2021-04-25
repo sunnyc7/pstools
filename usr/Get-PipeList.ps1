@@ -42,7 +42,7 @@ function Get-PipeList {
     }
     $out_, $to_i = [PROCESS_BASIC_INFORMATION].MakeByRefType(), "ToInt$(($psz = [IntPtr]::Size) * 8)"
 
-    New-Delegate kernel32 {
+    New-Delegate kernelbase {
       sfh CreateFileW([buf, int, IO.FileShare, ptr, IO.FileMode, int, ptr])
     }
 
@@ -65,7 +65,7 @@ function Get-PipeList {
   }
   process {}
   end {
-    if (($pipes = $kernel32.CreateFileW.Invoke(
+    if (($pipes = $kernelbase.CreateFileW.Invoke(
       [buf].Uni('\\.\pipe\'), 0x80000000, [IO.FileShare]::Read,
       [IntPtr]::Zero, [IO.FileMode]::Open, 0, [IntPtr]::Zero
     )).IsInvalid) {
@@ -104,7 +104,7 @@ function Get-PipeList {
               'winsock2\\.+-(\S+)-0' {[Int32]"0x$($matches[1])"}
               default {
                 try {
-                  if (($file = $kernel32.CreateFileW.Invoke(
+                  if (($file = $kernelbase.CreateFileW.Invoke(
                     [buf].Uni("\\.\pipe\$($name)"), 0, [IO.FileShare]::None,
                     [IntPtr]::Zero, [IO.FileMode]::Open, 0, [IntPtr]::Zero
                   )).IsInvalid) { throw [InvalidOperationException]::new('Pipe is not available.') }
