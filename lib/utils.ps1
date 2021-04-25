@@ -48,10 +48,7 @@ function New-PsProxy {
   process { $cmd.Process($_) }
   end {
     $cmd.End()
-    $ps.ForEach{
-      .$Callback $_
-      #$_.Dispose()
-    }
+    $ps.ForEach{ .$Callback $_ }
   }
 }
 
