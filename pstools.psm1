@@ -69,11 +69,25 @@ function ConvertFrom-PtrToMethod {
   }
 }
 
+$ExportCache = {
+  param([Parameter(Mandatory)][ValidateNotNullOrEmpty()][String]$Module)
+
+  end {
+    if (!($exp = $ExecutionContext.SessionState.PSVariable.Get("__$Module").Value)) {
+      Set-Variable -Name "__$Module" -Value (
+        $exp = $GetDllExports.Invoke($Module)
+      ) -Option Constant -Scope Global -Visibility Private
+      $exp
+    }
+    else {$exp}
+  }
+}
+
 $Signatures = @{
   RtlNtStatusToDosError = [Func[Int32, Int32]]
 }
 
-$GetDllExports.Invoke('ntdll').Where{$_.Name -in $Signatures.Keys}.ForEach{
+$ExportCache.Invoke('ntdll').Where{$_.Name -in $Signatures.Keys}.ForEach{
   Set-Variable -Scope Global -Option ReadOnly -Name $_.Name -Value (
     ConvertFrom-PtrToMethod $_.Address $Signatures[$_.Name] StdCall
   ) -Force
@@ -86,7 +100,7 @@ $Signatures = @{
   LoadLibraryW = [Func[[Byte[]], IntPtr]]
 }
 
-$GetDllExports.Invoke('kernelbase').Where{$_.Name -in $Signatures.Keys}.ForEach{
+$ExportCache.Invoke('kernelbase').Where{$_.Name -in $Signatures.Keys}.ForEach{
   Set-Variable -Scope Global -Option ReadOnly -Name (
     $_.Name.EndsWith('W') ? $_.Name.Substring(0, $_.Name.Length - 1) : $_.Name
   ) -Value (ConvertFrom-PtrToMethod $_.Address $Signatures[$_.Name] StdCall) -Force
