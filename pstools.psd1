@@ -1,6 +1,6 @@
 @{
   RootModule = 'pstools.psm1'
-  ModuleVersion = '8.0.0.0'
+  ModuleVersion = '8.0.1.0'
   CompatiblePSEditions = 'Core'
   GUID = 'de1b363a-38a0-4921-837f-926c9fad2603'
   Author = 'greg zakharov'
@@ -49,6 +49,7 @@
     'Suspend-PsProcess'
   )
   FileList = @(
+    'etc\tips\call_driver.ps1',
     'etc\formats.ps1',
     'lib\accel.ps1',
     'lib\dynamic.ps1',
