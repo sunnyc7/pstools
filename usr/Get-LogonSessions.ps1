@@ -68,7 +68,7 @@ function Get-LogonSessions {
       #>
     } -CharSet Unicode
 
-    New-Delegate secur32 {
+    New-Delegate sspicli {
       int LsaEnumerateLogonSessions([uint_, ptr_])
       int LsaFreeReturnBuffer([ptr])
       int LsaGetLogonSessionData([ptr, ptr_])
@@ -80,13 +80,13 @@ function Get-LogonSessions {
   end {
     $count, $slist, $dump = 0, [IntPtr]::Zero, @()
     try {
-      if (($nts = $secur32.LsaEnumerateLogonSessions.Invoke([ref]$count, [ref]$slist)) -ne 0) {
+      if (($nts = $sspicli.LsaEnumerateLogonSessions.Invoke([ref]$count, [ref]$slist)) -ne 0) {
         throw (ConvertTo-ErrMessage -NtStatus $nts)
       }
 
       $luid, $data = $slist.$to_i(), [IntPtr]::Zero
       for ($i = 0; $i -lt $count; $i++) {
-        if (($nts = $secur32.LsaGetLogonSessionData.Invoke([IntPtr]$luid, [ref]$data)) -ne 0) {
+        if (($nts = $sspicli.LsaGetLogonSessionData.Invoke([IntPtr]$luid, [ref]$data)) -ne 0) {
           throw (ConvertTo-ErrMessage -NtStatus $nts)
         }
 
@@ -101,7 +101,7 @@ function Get-LogonSessions {
           LogonTime   = [DateTime]::FromFileTime($sess.LogonTime)
         }
         $luid += [LUID]::GetSize()
-        if (($nts = $secur32.LsaFreeReturnBuffer.Invoke($data)) -ne 0) {
+        if (($nts = $sspicli.LsaFreeReturnBuffer.Invoke($data)) -ne 0) {
           Write-Verbose (ConvertTo-ErrMessage -NtStatus $nts)
         }
       }
@@ -109,7 +109,7 @@ function Get-LogonSessions {
     catch {Write-Verbose $_}
     finally {
       if ($slist -ne [IntPtr]::Zero) {
-        if (($nts = $secur32.LsaFreeReturnBuffer.Invoke($slist)) -ne 0) {
+        if (($nts = $sspicli.LsaFreeReturnBuffer.Invoke($slist)) -ne 0) {
           Write-Verbose (ConvertTo-ErrMessage -NtStatus $nts)
         }
       }
