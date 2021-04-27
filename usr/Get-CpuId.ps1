@@ -5,7 +5,7 @@ function Get-CpuId {
   [CmdletBinding()]param()
 
   begin {
-    New-Delegate kernel32 {
+    New-Delegate kernelbase {
       ptr VirtualAlloc([ptr, dptr, uint, uint])
       bool VirtualFree([ptr, dptr, uint])
     }
@@ -121,7 +121,7 @@ function Get-CpuId {
   process {}
   end {
     try {
-      if (($ptr = $kernel32.VirtualAlloc.Invoke(
+      if (($ptr = $kernelbase.VirtualAlloc.Invoke(
         [IntPtr]::Zero, [UIntPtr]::new($bytes.Length), 0x3000, 0x40
       )) -eq [IntPtr]::Zero) {
         throw [InvalidOperationException]::new('Cannot allocate virtual memory block.')
@@ -170,7 +170,7 @@ function Get-CpuId {
     catch { Write-Verbose $_ }
     finally {
       if ($ptr) {
-        if (!$kernel32.VirtualFree.Invoke($ptr, [UIntPtr]::Zero, 0x8000)) {
+        if (!$kernelbase.VirtualFree.Invoke($ptr, [UIntPtr]::Zero, 0x8000)) {
           Write-Verbose 'VirtualFree is failed.'
         }
       }
