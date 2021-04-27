@@ -1,6 +1,6 @@
 @{
   RootModule = 'pstools.psm1'
-  ModuleVersion = '8.0.1.2'
+  ModuleVersion = '8.0.1.3'
   CompatiblePSEditions = 'Core'
   GUID = 'de1b363a-38a0-4921-837f-926c9fad2603'
   Author = 'greg zakharov'
@@ -28,6 +28,7 @@
   FunctionsToExport = @(
     'Clear-AppCompatCache',
     'Clear-PsWorkingSet',
+    'Get-Accelerators',
     'Get-ApiSet',
     'Get-ClockRes',
     'Get-CpuCache',
@@ -49,7 +50,6 @@
     'Suspend-PsProcess'
   )
   FileList = @(
-    'etc\tips\call_driver.ps1',
     'etc\formats.ps1',
     'lib\accel.ps1',
     'lib\dynamic.ps1',
@@ -58,6 +58,7 @@
     'lib\utils.ps1',
     'usr\Clear-AppCompatCache.ps1',
     'usr\Clear-PsWorkingSet.ps1',
+    'usr\Get-Accelerators.ps1',
     'usr\Get-ApiSet.ps1',
     'usr\Get-ClockRes.ps1',
     'usr\Get-CpuCache.ps1',
