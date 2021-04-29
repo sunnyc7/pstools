@@ -1,6 +1,6 @@
 @{
   RootModule = 'pstools.psm1'
-  ModuleVersion = '8.0.1.6'
+  ModuleVersion = '8.0.1.7'
   CompatiblePSEditions = 'Core'
   GUID = 'de1b363a-38a0-4921-837f-926c9fad2603'
   Author = 'greg zakharov'
@@ -28,7 +28,6 @@
   FunctionsToExport = @(
     'Clear-AppCompatCache',
     'Clear-PsWorkingSet',
-    'Get-Accelerators',
     'Get-ApiSet',
     'Get-ClockRes',
     'Get-CpuCache',
@@ -46,7 +45,6 @@
     'Get-SysModules',
     'Measure-Execution',
     'Resume-PsProcess',
-    'Show-DynTypes',
     'Show-WhoIs',
     'Suspend-PsProcess'
   )
@@ -59,7 +57,6 @@
     'lib\utils.ps1',
     'usr\Clear-AppCompatCache.ps1',
     'usr\Clear-PsWorkingSet.ps1',
-    'usr\Get-Accelerators.ps1',
     'usr\Get-ApiSet.ps1',
     'usr\Get-ClockRes.ps1',
     'usr\Get-CpuCache.ps1',
@@ -77,7 +74,6 @@
     'usr\Get-SysModules.ps1',
     'usr\Measure-Execution.ps1',
     'usr\Resume-PsProcess.ps1',
-    'usr\Show-DynTypes.ps1',
     'usr\Show-WhoIs.ps1',
     'usr\Suspend-PsProcess.ps1',
     'pstools.psd1',
