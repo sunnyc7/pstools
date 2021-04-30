@@ -3,7 +3,7 @@ function Clear-AppCompatCache {
 
   end {
     (Test-IsAdmin) ? $(
-      New-Delegate kernel32 {
+      New-Delegate kernelbase {
         bool BaseFlushAppcompatCache
       }
 
