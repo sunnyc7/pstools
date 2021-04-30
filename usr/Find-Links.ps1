@@ -1,6 +1,7 @@
 using namespace System.IO
 using namespace System.Runtime.InteropServices
 
+# fsutil hardlink list C:\Windows\notepad.exe
 function Find-Links {
   [CmdletBinding()]
   param(
