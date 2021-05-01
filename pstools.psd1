@@ -42,6 +42,7 @@
     'Get-PsDump',
     'Get-PsHandle',
     'Get-PsHandle',
+    'Get-PsTree',
     'Get-PsVMInfo',
     'Get-Streams',
     'Get-Strings',
