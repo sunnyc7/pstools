@@ -1,6 +1,6 @@
 @{
   RootModule = 'pstools.psm1'
-  ModuleVersion = '8.0.1.10'
+  ModuleVersion = '8.0.1.11'
   CompatiblePSEditions = 'Core'
   GUID = 'de1b363a-38a0-4921-837f-926c9fad2603'
   Author = 'greg zakharov'
@@ -18,6 +18,7 @@
     'pipelist',
     'psdump',
     'psresume',
+    'pstree',
     'psuspend',
     'streams',
     'strings',
@@ -39,6 +40,7 @@
     'Get-LogonSessions',
     'Get-PipeList',
     'Get-PsDump',
+    'Get-PsHandle',
     'Get-PsHandle',
     'Get-PsVMInfo',
     'Get-Streams',
@@ -71,6 +73,7 @@
     'usr\Get-PipeList.ps1',
     'usr\Get-PsDump.ps1',
     'usr\Get-PsHandle.ps1',
+    'usr\Get-PsTree.ps1',
     'usr\Get-PsVMInfo.ps1',
     'usr\Get-Streams.ps1',
     'usr\Get-Strings.ps1',
