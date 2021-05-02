@@ -58,9 +58,9 @@ function Find-Links {
       $sfh = [File]::Open($f.FullName, [FileMode]::Open, [FileAccess]::Read, [FileShare]::Read)
       $out = [BY_HANDLE_FILE_INFORMATION]::new()
       if (!$kernelbase.GetFileInformationByHandle.Invoke($sfh.Handle, [ref]$out)) {
-        throw [InvalidOPerationException]::new('Cannot retrieve file information.')
+        throw [InvalidOperationException]::new('Cannot retrieve file information.')
       }
-      if (($nl = $out.nNumberOfLinks) -le 1) { throw [InvalidOPerationException]::new('File has not hard links.') }
+      if (($nl = $out.nNumberOfLinks) -le 1) { throw [InvalidOperationException]::new('File has not hard links.') }
       $fff = $kernelbase.FindFirstFileNameW.Invoke([buf].Uni($f.FullName), 0, [ref]$ret, $buf)
       $chr = "$([Char]32)`u{251C}", "$([Char]32)`u{2514}"
       "`e[7m$($f.FullName) (index: 0x$($out.nFileIndexLow.ToString('X8')), links: $nl)`e[0m"
