@@ -101,13 +101,14 @@ function Get-PipeList {
                 ) : $msys
               }
               'pipe_eventroot' { & $WithoutSysPrivileges }
+              'uv\\.+-(\d+)' {$matches[1]}
               'winsock2\\.+-(\S+)-0' {[Int32]"0x$($matches[1])"}
               default {
                 try {
                   if (($file = $kernelbase.CreateFileW.Invoke(
                     [buf].Uni("\\.\pipe\$($name)"), 0, [IO.FileShare]::None,
                     [IntPtr]::Zero, [IO.FileMode]::Open, 0, [IntPtr]::Zero
-                  )).IsInvalid) { throw [InvalidOperationException]::new('Pipe is not available.') }
+                  )).IsInvalid) { throw [InvalidOperationException]::new("$name is not available.") }
 
                   $ids = [Byte[]]::new([FILE_PROCESS_IDS_USING_FILE_INFORMATION]::GetSize())
                   do {
@@ -126,7 +127,7 @@ function Get-PipeList {
                   Write-Verbose "$($file.IsClosed)"
                 }
               }
-            };'{0} ({1})' -f ($who = Get-Process -Id $who).ProcessName, $who.Id)
+            };$who ? ('{0} ({1})' -f ($who = Get-Process -Id $who).ProcessName, $who.Id) : '??')
           } # pipe
 
           if (!$fdi.NextEntryOffset) {break}
