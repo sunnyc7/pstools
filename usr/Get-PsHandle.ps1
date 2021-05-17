@@ -5,7 +5,7 @@ function Get-PsHandle {
   [CmdletBinding()]param($PSBoundParameters)
 
   begin {
-    New-Delegate kernel32 {
+    New-Delegate kernelbase {
       bool CloseHandle([ptr])
       uint QueryDosDeviceW([buf, buf, uint])
     }
@@ -53,7 +53,7 @@ function Get-PsHandle {
     $buf, $drives = [Byte[]]::new(0x100), @{}
     ([IO.DriveInfo]::GetDrives().Name.Trim('\')).ForEach{
       $buf.Clear()
-      if ($kernel32.QueryDosDeviceW.Invoke(
+      if ($kernelbase.QueryDosDeviceW.Invoke(
         [Text.Encoding]::Unicode.GetBytes($_), $buf, 0x100
       )) {$drives[[Text.Encoding]::Unicode.GetString($buf).Trim("`0")] = $_}
     }
@@ -74,7 +74,7 @@ function Get-PsHandle {
           $entry = [IntPtr]$tmp -as [PROCESS_HANDLE_TABLE_ENTRY_INFO]
           [IntPtr]$duple = [IntPtr]::Zero
           if ($ntdll.NtDuplicateObject.Invoke(
-              $hndl, $entry.HandleValue, [IntPtr]-1, [ref]$duple, 0, $false, 0x02
+            $hndl, $entry.HandleValue, [IntPtr]-1, [ref]$duple, 0, $false, 0x02
           ) -eq 0) {
             $h_type = Get-ObjectProperty $duple 2
             $h_name = Get-ObjectProperty $duple 1
@@ -98,7 +98,7 @@ function Get-PsHandle {
               Name  = $h_name
             }
 
-            if (!$kernel32.CloseHandle.Invoke($duple)) {
+            if (!$kernelbase.CloseHandle.Invoke($duple)) {
               Write-Verbose "Cannot close $($duple.$to_i()) duple."
             }
           }
