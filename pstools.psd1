@@ -1,6 +1,6 @@
 @{
   RootModule = 'pstools.psm1'
-  ModuleVersion = '8.0.1.11'
+  ModuleVersion = '8.0.2.0'
   CompatiblePSEditions = 'Core'
   GUID = 'de1b363a-38a0-4921-837f-926c9fad2603'
   Author = 'greg zakharov'
@@ -38,6 +38,7 @@
     'Get-Entropy',
     'Get-LoadOrder',
     'Get-LogonSessions',
+    'Get-PeManifest',
     'Get-PipeList',
     'Get-PsDump',
     'Get-PsHandle',
@@ -71,6 +72,7 @@
     'usr\Get-Entropy.ps1',
     'usr\Get-LoadOrder.ps1',
     'usr\Get-LogonSessions.ps1',
+    'usr\Get-PeManifest.ps1',
     'usr\Get-PipeList.ps1',
     'usr\Get-PsDump.ps1',
     'usr\Get-PsHandle.ps1',
