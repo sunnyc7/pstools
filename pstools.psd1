@@ -1,12 +1,12 @@
 @{
   RootModule = 'pstools.psm1'
-  ModuleVersion = '8.0.2.0'
+  ModuleVersion = '8.0.3.0'
   CompatiblePSEditions = 'Core'
   GUID = 'de1b363a-38a0-4921-837f-926c9fad2603'
   Author = 'greg zakharov'
   Copyright = 'MIT'
   Description = 'Useful utilities for Win10 in everyday experience.'
-  PowerShellVersion = '7.1'
+  PowerShellVersion = '7.2'
   AliasesToExport = @(
     'clockres',
     'clpws',
