@@ -1,19 +1,17 @@
 using namespace System.Reflection
+using namespace System.Reflection.Emit
 using namespace System.Management.Automation
 using namespace System.Collections.ObjectModel
 using namespace System.Runtime.InteropServices
 
 function Get-DynBuilder {
   end {
-    if (!($pmb = $ExecutionContext.SessionState.PSVariable.Get('PwshDynBuilder').Value)) {
-      Set-Variable -Name PwshDynBuilder -Value ($pmb =
-        ([AssemblyBuilder]::DefineDynamicAssembly(
-          ([AssemblyName]::new('PwshDynBuilder')), 'Run'
-        )).DefineDynamicModule('PwshDynBuilder', $false)
-      ) -Option Constant -Scope Global -Visibility Private
+    ($pmb = $ExecutionContext.SessionState.PSVariable.Get('PwshDynBuilder').Value) ? $pmb : $(
+      Set-Variable -Name PwshDynBuilder -Value($pmb = ([AssemblyBuilder]::DefineDynamicAssembly(
+        [AssemblyName]::new('PwshDynBuilder'), [AssemblyBuilderAccess]::Run
+      )).DefineDynamicModule('PwshDynBuilder')) -Option Constant -Scope Global -Visibility Private
       $pmb
-    }
-    else {$pmb}
+    )
   }
 }
 
