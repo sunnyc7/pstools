@@ -1,6 +1,6 @@
 @{
   RootModule = 'pstools.psm1'
-  ModuleVersion = '8.0.3.0'
+  ModuleVersion = '8.0.3.10'
   CompatiblePSEditions = 'Core'
   GUID = 'de1b363a-38a0-4921-837f-926c9fad2603'
   Author = 'greg zakharov'
@@ -89,5 +89,4 @@
     'pstools.psd1',
     'pstools.psm1'
   )
-  ScriptsToProcess = 'etc\formats.ps1'
 }
