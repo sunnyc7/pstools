@@ -12,7 +12,7 @@ $GetDllExports = {
         0x014C { 0x20, 0x78, 0x7C } 0x8664 { 0x40, 0x88, 0x8C } default { [SystemException]::new() }
       }
       $tmp, $fun = $mod."ToInt$($jmp[0])"(), @{}
-      $va, $sz = [Marshal]::ReadInt32($mod, $mov + $jmp[1]), [Marshal]::ReadInt32($mod, $mov + $jmp[2])
+      $va, $sz = $jmp[1,2].ForEach{[Marshal]::ReadInt32($mod, $mov + $_)}
       ($ed = @{bs = 0x10; nf = 0x14; nn = 0x18; af = 0x1C; an = 0x20; ao = 0x24}).Keys.ForEach{
         $val = [Marshal]::ReadInt32($mod, $va + $ed.$_)
         Set-Variable -Name $_ -Value ($_.StartsWith('a') ? $tmp + $val : $val) -Scope Script
@@ -66,24 +66,26 @@ function ConvertFrom-PtrToMethod {
   }
 }
 
-($scheme = @{
-  kernelbase = @{
-    FreeLibrary = [Func[IntPtr, Boolean]]
-    GetModuleHandleW = [Func[[Byte[]], IntPtr]]
-    GetProcAddress = [Func[IntPtr, String, IntPtr]]
-    LoadLibraryW = [Func[[Byte[]], IntPtr]]
-  }
-  ntdll = @{
-    RtlNtStatusToDosError = [Func[Int32, Int32]]
-  }
-}).Keys.ForEach{
-  $functions = $scheme[($module = $_)]
-  $GetDllExports.Invoke($module).Where{$_.Name -in $functions.Keys}.ForEach{
-    Set-Variable -Name (
-      $_.Name.EndsWith('W') ? $_.Name.Substring(0, $_.Name.Length - 1) : $_.Name
-    ) -Value (
-      ConvertFrom-PtrToMethod -Address $_.Address -Prototype $functions[$_.Name] -cc StdCall
-    ) -Scope Global -Option ReadOnly -Force
+if (!(Test-Path variable:RtlNtStatusToDosError)) { # check only one entry
+  ($scheme = @{
+    kernelbase = @{
+      FreeLibrary = [Func[IntPtr, Boolean]]
+      GetModuleHandleW = [Func[[Byte[]], IntPtr]]
+      GetProcAddress = [Func[IntPtr, String, IntPtr]]
+      LoadLibraryW = [Func[[Byte[]], IntPtr]]
+    }
+    ntdll = @{
+      RtlNtStatusToDosError = [Func[Int32, Int32]]
+    }
+  }).Keys.ForEach{
+    $functions = $scheme[($module = $_)]
+    $GetDllExports.Invoke($module).Where{$_.Name -in $functions.Keys}.ForEach{
+      Set-Variable -Name (
+        $_.Name.EndsWith('W') ? $_.Name.Substring(0, $_.Name.Length - 1) : $_.Name
+      ) -Value (
+        ConvertFrom-PtrToMethod -Address $_.Address -Prototype $functions[$_.Name] -cc StdCall
+      ) -Scope Global -Option ReadOnly -Force
+    }
   }
 }
 
