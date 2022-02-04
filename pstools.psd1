@@ -55,7 +55,6 @@
     'Suspend-PsProcess'
   )
   FileList = @(
-    'etc\formats.ps1',
     'lib\accel.ps1',
     'lib\dynamic.ps1',
     'lib\pcall.ps1',
