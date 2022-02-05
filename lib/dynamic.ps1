@@ -7,7 +7,7 @@ using namespace System.Runtime.InteropServices
 function Get-DynBuilder {
   end {
     ($pmb = $ExecutionContext.SessionState.PSVariable.Get('PwshDynBuilder').Value) ? $pmb : $(
-      Set-Variable -Name PwshDynBuilder -Value($pmb = ([AssemblyBuilder]::DefineDynamicAssembly(
+      Set-Variable -Name PwshDynBuilder -Value ($pmb = ([AssemblyBuilder]::DefineDynamicAssembly(
         [AssemblyName]::new('PwshDynBuilder'), [AssemblyBuilderAccess]::Run
       )).DefineDynamicModule('PwshDynBuilder')) -Option Constant -Scope Global -Visibility Private
       $pmb
