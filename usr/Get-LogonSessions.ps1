@@ -87,7 +87,8 @@ function Get-LogonSessions {
       $luid, $data = $slist.$to_i(), [IntPtr]::Zero
       for ($i = 0; $i -lt $count; $i++) {
         if (($nts = $sspicli.LsaGetLogonSessionData.Invoke([IntPtr]$luid, [ref]$data)) -ne 0) {
-          throw (ConvertTo-ErrMessage -NtStatus $nts)
+          $luid += [LUID]::GetSize()
+          continue # throw (ConvertTo-ErrMessage -NtStatus $nts)
         }
 
         $sess = $data -as [SECURITY_LOGON_SESSION_DATA]
@@ -103,7 +104,7 @@ function Get-LogonSessions {
         $luid += [LUID]::GetSize()
         if (($nts = $sspicli.LsaFreeReturnBuffer.Invoke($data)) -ne 0) {
           Write-Verbose (ConvertTo-ErrMessage -NtStatus $nts)
-        }
+        } else { $data = [IntPtr]::Zero } # was released
       }
     }
     catch {Write-Verbose $_}
