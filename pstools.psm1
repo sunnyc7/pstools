@@ -50,12 +50,12 @@ function ConvertFrom-PtrToMethod {
     [Parameter(Position=2)]
     [ValidateNotNullOrEmpty()]
     [Alias('cc')]
-    [CallingConvention]$CallingConvention = 'Cdecl'
+    [CallingConvention]$CallingConvention = 'StdCall'
   )
 
   end {
     $method = $Prototype.GetMethod('Invoke')
-    $returntype, $paramtypes = $method.ReturnType, ($method.GetParameters().ParameterType ?? $null)
+    $returntype, $paramtypes = $method.ReturnType, $method.GetParameters().ParameterType # ?? $null
     $il, $to_i = ($holder = [DynamicMethod]::new('Invoke', $returntype, $paramtypes, $Prototype)
     ).GetILGenerator(), "ToInt$(($sz = [IntPtr]::Size) * 8)"
     if ($paramtypes) { (0..($paramtypes.Length - 1)).ForEach{$il.Emit([OpCodes]::ldarg, $_)} }
@@ -83,7 +83,7 @@ if (!(Test-Path variable:RtlNtStatusToDosError)) { # check only one entry
       Set-Variable -Name (
         $_.Name.EndsWith('W') ? $_.Name.Substring(0, $_.Name.Length - 1) : $_.Name
       ) -Value (
-        ConvertFrom-PtrToMethod -Address $_.Address -Prototype $functions[$_.Name] -cc StdCall
+        ConvertFrom-PtrToMethod -Address $_.Address -Prototype $functions[$_.Name]
       ) -Scope Global -Option ReadOnly -Force
     }
   }
