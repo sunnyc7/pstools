@@ -4,5 +4,6 @@
 !pstools.psd1
 !pstools.psm1
 !readme.txt
+!etc/windbg/*.js
 !*.ps1
 !*/
