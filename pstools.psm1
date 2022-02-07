@@ -1,6 +1,15 @@
 using namespace System.Reflection.Emit
 using namespace System.Runtime.InteropServices
 
+$GetDbgPath = {
+  end {
+    $dbg = 'HKLM:\SOFTWARE\Microsoft\Windows Kits\Installed Roots'
+    if (($dbg = Get-ItemProperty $dbg -ErrorAction 0)) {
+      "$($dbg.PSObject.Properties.Where{$_.Name -like 'WindowsDebuggersRoot*'}.Value)x$([IntPtr]::Size * 8)"
+    }
+  }
+}
+
 $GetDllExports = {
   param([Parameter(Mandatory)][ValidateNotNullOrEmpty()][String]$Module)
 
@@ -66,6 +75,12 @@ function ConvertFrom-PtrToMethod {
   }
 }
 
+if (Test-Path ($dbg = $GetDbgPath.Invoke())) {
+  if (($env:PATH -split ';') -notcontains $dbg) {
+    $env:PATH += ";$dbg;$PSScriptRoot\etc\windbg"
+  }
+}
+
 if (!(Test-Path variable:RtlNtStatusToDosError)) { # check only one entry
   ($scheme = @{
     kernelbase = @{
@@ -96,6 +111,12 @@ $MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
    'LoadLibrary',
    'RtlNtStatusToDosError'
   ).ForEach{ Remove-Variable -Name $_ -Scope Global -Force }
+
+  $env:PATH = ($res = [Linq.Enumerable]::Except(
+    [String[]]($env:PATH -split ';'),
+    [String[]]($GetDbgPath.Invoke(), "$PSScriptRoot\etc\windbg")
+  )) -join ';'
+  $res.Dispose()
 }
 
 ('lib', 'usr').ForEach{
