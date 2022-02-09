@@ -55,6 +55,7 @@
     'Suspend-PsProcess'
   )
   FileList = @(
+    'etc\windbg\InvertedFunctionTable.js',
     'lib\accel.ps1',
     'lib\dynamic.ps1',
     'lib\pcall.ps1',
