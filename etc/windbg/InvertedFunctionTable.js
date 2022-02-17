@@ -17,6 +17,7 @@
 function *InvertedFunctionTable(prefix = 'KeUser') {
   if (!host.currentSession.Attributes.Target.IsKernelTarget) {
     host.diagnostics.debugLog('Incorrect debugger environment.\n');
+    return;
   }
 
   let table = host.createPointerObject(
