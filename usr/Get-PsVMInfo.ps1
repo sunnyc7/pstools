@@ -55,7 +55,7 @@ function Get-PsVMInfo {
     }
 
     $fmt, $to_i, $to_u = "{0:X$(($sz = [IntPtr]::Size) * 2)}", "ToInt$($sz * 8)", "ToUInt$($sz * 8)"
-    $sz, $ptr = [MEMEORY_BASIC_INFORMATION]::GetSize(), ($paramAddress.Value ?? [IntPtr]::Zero)
+    $z, $sz, $ptr = $sz, [MEMEORY_BASIC_INFORMATION]::GetSize(), ($paramAddress.Value ?? [IntPtr]::Zero)
     $query =! ($ptr -eq [IntPtr]::Zero)
   }
   process {}
@@ -65,6 +65,7 @@ function Get-PsVMInfo {
       $local:hndl = $_.Handle
       $local:_pid = $_.Id
       $pnt[([IntPtr]0x7FFE0000).$to_i()] = 'User Shared Data'
+      $mod = $_.Modules[0].BaseAddress.$to_i()
       foreach ($module in $_.Modules) {
         $pnt[($ba = $module.BaseAddress.$to_i())] = $module.ModuleName
         if (($nts = $ntdll.NtReadVirtualMemory.Invoke($hndl, $module.BaseAddress, $buf, $buf.Length, $null)) -ne 0) {
@@ -95,7 +96,14 @@ function Get-PsVMInfo {
           Write-Verbose (ConvertTo-ErrMessage -NtStatus $nts)
         }
         if (!$pnt.ContainsKey(($sig = $ptr.$to_i()))) {
-          $pnt[$sig] = "[$(-join$buf[0..15].ForEach{$_ -in (33..122) ? [Char]$_ : '.'})]"
+          $pnt[$sig] = ($mod -eq [BitConverter]::"ToInt$($z * 8)"($buf[($z * 2)..($z * 2 + $z - 1)], 0)) ? (
+            'PEB'
+          ) : $(switch -regex (($raw = -join$buf[0..15].ForEach{$_ -in (33..122) ? [Char]$_ : '.'})) {
+            'Actx' { 'Activation Context Data' }
+            'BeginThm' { 'Window Theme Data' }
+            'P.E.B' { 'WER Registration Data' }
+            #default { "[$raw]" }
+          })
         }
 
         $dmp = [PSCustomObject]@{
