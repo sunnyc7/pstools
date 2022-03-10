@@ -96,13 +96,15 @@ function Get-PsVMInfo {
           Write-Verbose (ConvertTo-ErrMessage -NtStatus $nts)
         }
         if (!$pnt.ContainsKey(($sig = $ptr.$to_i()))) {
-          $pnt[$sig] = ($mod -eq [BitConverter]::"ToInt$($z * 8)"($buf[($z * 2)..($z * 2 + $z - 1)], 0)) ? (
-            'PEB'
+          $pnt[$sig] = ($mod -eq [BitConverter]::"ToInt$($z * 8)"($buf[($z * 2)..($z * 2 + $z - 1)], 0)) ? $(
+            'PEB' # useful for getting heaps or other specific information
           ) : $(switch -regex (($raw = -join$buf[0..15].ForEach{$_ -in (33..122) ? [Char]$_ : '.'})) {
             'Actx' { 'Activation Context Data' }
             'BeginThm' { 'Window Theme Data' }
+            'COM+' { 'Mapped File' }
+            'MZ' { 'Mapped File' }
             'P.E.B' { 'WER Registration Data' }
-            #default { "[$raw]" }
+            # default { "[$raw]" }
           })
         }
 
